@@ -14,7 +14,7 @@ logic_az3_cidr_block    = "10.0.160.0/20"
 # Lambda
 #----------------------------------------------------------------------------
 filename      = "code.zip"
-function_name = "listOfClinics"
+function_name = "logout"
 handler = "index.handler"
 role_name = "iam_lambda"
 sg_name = "Lambda Security Group"
