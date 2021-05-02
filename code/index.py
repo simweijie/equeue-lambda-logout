@@ -26,22 +26,41 @@ logger.info("SUCCESS: Connection to RDS MySQL instance succeeded")
 def handler(event, context):
     cur = connection.cursor()  
 ## Retrieve Data
-    query = "SELECT * FROM Clinic"    
+    query = "SELECT * FROM Branch"
+    query = query = "SELECT b.*,sum(q.status='Q'),op.opens,op.closes FROM Branch b, Queue q, OpeningHours op WHERE b.id=q.branchId AND b.id=op.branchId and op.dayOfWeek=dayofweek(now()) GROUP BY b.id;"
     cur.execute(query)
     connection.commit()
 ## Construct body of the response object
     
-    clinicList = []
+    branchList = []
     rows = cur.fetchall()
     for row in rows:
-        print("TEST {0} {1}".format(row[0],row[1]))
+        print("TEST {0} {1} {2} {3} {4} {5}".format(row[0],row[1],row[2],row[3],row[4],row[5]))
         transactionResponse = {}
         transactionResponse['id'] = row[0]
         transactionResponse['name'] = row[1]
-        clinicList.append(transactionResponse)
+        transactionResponse['district'] = row[2]
+        transactionResponse['addr'] = row[3]
+        transactionResponse['postal'] = row[4]
+        transactionResponse['contactNo'] = row[5]
+        transactionResponse['latt'] = row[6]
+        transactionResponse['longt'] = row[7]
+        transactionResponse['clinicId'] = row[8]
+        transactionResponse['queueLength'] = row[9]
+        transactionResponse['opens']=str(row[10])
+        transactionResponse['closes']=str(row[11])
+        branchList.append(transactionResponse)
 
 # Construct http response object
     responseObject = {}
-    responseObject['data']= clinicList
+    # responseObject['statusCode'] = 200
+    # responseObject['headers'] = {}
+    # responseObject['headers']['Content-Type']='application/json'
+    # responseObject['headers']['Access-Control-Allow-Origin']='*'
+    responseObject['data']= branchList
+    # responseObject['body'] = json.dumps(transactionResponse, sort_keys=True,default=str)
+    
+    #k = json.loads(responseObject['body'])
+    #print(k['uin'])
 
     return responseObject
