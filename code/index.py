@@ -27,7 +27,7 @@ def handler(event, context):
     cur = connection.cursor()  
 ## Retrieve Data
     query = "SELECT * FROM Branch"
-    query = query = "SELECT b.*,sum(q.status='Q'),op.opens,op.closes FROM Branch b, Queue q, OpeningHours op WHERE b.id=q.branchId AND b.id=op.branchId and op.dayOfWeek=dayofweek(now()) GROUP BY b.id;"
+    query = query = "SELECT b.*,sum(q.status='Q'),op.opens,op.closes FROM Branch b, Queue q, OpeningHours op WHERE b.id=q.branchId AND b.id=op.branchId and op.dayOfWeek=dayofweek(now()) AND current_time+ interval 8 hour BETWEEN opens AND closes GROUP BY b.id;"
     cur.execute(query)
     connection.commit()
 ## Construct body of the response object
